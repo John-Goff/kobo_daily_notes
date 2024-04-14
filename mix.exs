@@ -7,7 +7,8 @@ defmodule KoboDailyNotes.MixProject do
       version: "0.1.0",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: releases()
     ]
   end
 
@@ -23,6 +24,19 @@ defmodule KoboDailyNotes.MixProject do
   defp deps do
     [
       {:burrito, "~> 1.0"}
+    ]
+  end
+
+  defp releases do
+    [
+      kobo_daily_notes: [
+        steps: [:assemble, &Burrito.wrap/1],
+        burrito: [
+          targets: [
+            linux: [os: :linux, cpu: :arm]
+          ]
+        ]
+      ]
     ]
   end
 end
