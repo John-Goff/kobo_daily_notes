@@ -86,3 +86,6 @@ section_header "Compressing ERTS release"
 podman exec -itd -w /home/kox/build/release \
     kobo_daily_notes_builder \
     tar -czvf "OTP-$ERLANG_VERSION".tar.gz "$release_dir"
+
+section_header "Cleaning up"
+podman stop kobo_daily_notes_builder
