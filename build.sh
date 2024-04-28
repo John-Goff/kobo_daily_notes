@@ -21,8 +21,11 @@ section_header () {
 mkdir -p "$ROOT_DIR"/tmp/
 section_header "Cloning koxtoolchain"
 git clone --depth 1 https://github.com/koreader/koxtoolchain.git "$ROOT_DIR"/tmp/koxtoolchain
-section_header "Building koxtoolchain podman image"
-"$ROOT_DIR"/tmp/koxtoolchain/buildah-koxtoolchain.sh kobo
+(
+    cd "$ROOT_DIR"/tmp/koxtoolchain || exit 1
+    section_header "Building koxtoolchain podman image"
+    ./buildah-koxtoolchain.sh kobo
+)
 
 # Next we must compile Erlang using the toolchain we just built.
 section_header "Cloning Erlang"
@@ -89,3 +92,4 @@ podman exec -itd -w /home/kox/build/release \
 
 section_header "Cleaning up"
 podman stop kobo_daily_notes_builder
+podman rm kobo_daily_notes_builder
