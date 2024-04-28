@@ -31,14 +31,14 @@ git clone --branch "OTP-$ERLANG_VERSION" --depth 1 https://github.com/erlang/otp
 ERL_TOP="$ROOT_DIR/tmp/erlang"
 export ERL_TOP
 
-# Start the container in detatched mode running sh which will wait for input, which never comes.
+# Start the container in detached mode running sh which will wait for input, which never comes.
 section_header "Starting builder container"
 podman run \
     --name kobo_daily_notes_builder \
     --mount type=bind,source="$ERL_TOP",destination=/home/kox/build \
     --interactive \
     --tty \
-    --detatch \
+    --detach \
     koxtoolchain:kobo-latest \
     /bin/sh
 
@@ -48,7 +48,7 @@ section_header "Configuring the bootstrap system"
 podman exec \
     --interactive \
     --tty \
-    --detatch \
+    --detach \
     --working-directory /home/kox/build \
     kobo_daily_notes_builder \
     ./configure --enable-bootstrap-only
