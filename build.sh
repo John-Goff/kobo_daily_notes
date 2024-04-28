@@ -49,7 +49,7 @@ podman exec \
     --interactive \
     --tty \
     --detach \
-    --working-directory /home/kox/build \
+    --workdir /home/kox/build \
     kobo_daily_notes_builder \
     ./configure --enable-bootstrap-only
 
@@ -63,7 +63,7 @@ podman exec -itd -w /home/kox/build \
 section_header "Configuring Erlang for the Kobo"
 podman exec -itd -w /home/kox/build \
     kobo_daily_notes_builder \
-    ./configure --host="arm-kobo-linux-gnueabihf" --build="$(./make/autoconf/config.guess)"
+    ./configure --host="arm-kobo-linux-gnueabihf" --build="$($ERL_TOP/make/autoconf/config.guess)"
 
 section_header "Building Erlang for the Kobo"
 podman exec -itd -w /home/kox/build \
