@@ -51,45 +51,44 @@ section_header "Configuring the bootstrap system"
 podman exec \
     --interactive \
     --tty \
-    --detach \
     --workdir /home/kox/build \
     kobo_daily_notes_builder \
     ./configure --enable-bootstrap-only
 
 # Same args as the above, we'll just use the short version from now on.
 section_header "Building the bootstrap system"
-podman exec -itd -w /home/kox/build \
+podman exec -it -w /home/kox/build \
     kobo_daily_notes_builder \
     make
 
 # Now we can go about cross compiling for our Kobo
 section_header "Configuring Erlang for the Kobo"
-podman exec -itd -w /home/kox/build \
+podman exec -it -w /home/kox/build \
     kobo_daily_notes_builder \
     ./configure --host="arm-kobo-linux-gnueabihf" --build="$($ERL_TOP/make/autoconf/config.guess)"
 
 section_header "Building Erlang for the Kobo"
-podman exec -itd -w /home/kox/build \
+podman exec -it -w /home/kox/build \
     kobo_daily_notes_builder \
     make
 
 release_dir="otp-$ERLANG_VERSION-linux-arm"
 
 section_header "Copying the release into the release dir"
-podman exec -itd -w /home/kox/build \
+podman exec -it -w /home/kox/build \
     kobo_daily_notes_builder \
-    make release RELEASE_ROOT="release/$release_dir"
+    make release RELEASE_ROOT="/home/kox/build/release/$release_dir"
 
 section_header "Running the install script to configure location on the Kobo"
-podman exec -itd -w /home/kox/build/release/"$release_dir" \
+podman exec -it -w /home/kox/build/release/"$release_dir" \
     kobo_daily_notes_builder \
     ./Install -cross -minimal /mnt/onboard/.adds/kobo_daily_notes/erts/
 
 section_header "Compressing ERTS release"
-podman exec -itd -w /home/kox/build/release \
+podman exec -it -w /home/kox/build/release \
     kobo_daily_notes_builder \
     tar -czvf "OTP-$ERLANG_VERSION".tar.gz "$release_dir"
 
-section_header "Cleaning up"
-podman stop kobo_daily_notes_builder
-podman rm kobo_daily_notes_builder
+#section_header "Cleaning up"
+#podman stop kobo_daily_notes_builder
+#podman rm kobo_daily_notes_builder
