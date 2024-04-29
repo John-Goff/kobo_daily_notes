@@ -19,13 +19,18 @@ section_header () {
 # set up, so that we don't need to require a cross compilation toolchain on every contributor's
 # machine. The podman container must first be built:
 mkdir -p "$ROOT_DIR"/tmp/
-section_header "Cloning koxtoolchain"
-git clone --depth 1 https://github.com/koreader/koxtoolchain.git "$ROOT_DIR"/tmp/koxtoolchain
-(
-    cd "$ROOT_DIR"/tmp/koxtoolchain || exit 1
-    section_header "Building koxtoolchain podman image"
-    ./buildah-koxtoolchain.sh kobo
-)
+if ! podman images | grep "kobo-latest" >/dev/null; then
+    echo "Podman image does not exist, building"
+    section_header "Cloning koxtoolchain"
+    git clone --depth 1 https://github.com/koreader/koxtoolchain.git "$ROOT_DIR"/tmp/koxtoolchain
+    (
+        cd "$ROOT_DIR"/tmp/koxtoolchain || exit 1
+        section_header "Building koxtoolchain podman image"
+        ./buildah-koxtoolchain.sh kobo
+    )
+else
+    echo "Podman image exists, skipping"
+fi
 
 # Next we must compile Erlang using the toolchain we just built.
 section_header "Cloning Erlang"
